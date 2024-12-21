@@ -46,19 +46,35 @@ import './App.css';
 //     }
 // }
 
+const calcValue = () =>{
+    console.log('random');
+
+    return Math.random() * (50 - 1) +1;
+    
+}
 
 const Slider = (props) => {
 
-    const [slide, setSlide] = useState(0);
+    const [slide, setSlide] = useState(() => calcValue());
 
     const [autoplay, setAutoplay] = useState(false);
 
+    // const [state, setState] =useState({slide:0, autoplay: false});
+
+    // function changeSlide(i) {
+    //     setState(state => ({...state, slide: state.slide + i}));
+    // }
+    
+    // function toggleAutoplay(i) {
+    //     setState(state => ({...state , autoplay: !state.autoplay}));
+    // }
+
     function changeSlide(i) {
-        setSlide(slide + i);
+        setSlide(slide => slide + i);
     }
     
     function toggleAutoplay(i) {
-        setAutoplay(!autoplay);
+        setAutoplay(autoplay => !autoplay);
     }
 
 
