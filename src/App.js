@@ -1,196 +1,105 @@
-import { Component, useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { Container } from 'react-bootstrap';
 import './App.css';
 
+const withSlider = (BaseComponent, getData) => {
+    return (props) => {
+        const [slide, setSlide] = useState(0);
+        const [autoplay, setAutoplay] = useState(false)
 
-// class Slider extends Component {
+        useEffect(() => {
+            setSlide(getData());
+        }, [])
 
-//     constructor(props) {
-//         super(props);
-//         this.state = {
-//             autoplay: false,
-//             slide: 0
-//         }
-//     }
+        function changeSlide(i) {
+            setSlide(slide => slide + i);
+        }
 
-
-
-//     changeSlide = (i) => {
-//         this.setState(({slide}) => ({
-//             slide: slide + i
-//         }))
-//     }
-
-//     toggleAutoplay = () => {
-//         this.setState(({autoplay}) => ({
-//             autoplay: !autoplay
-//         }))
-//     }
-
-//     render() {
-//         return (
-//             <Container>
-//                 <div className="slider w-50 m-auto">
-//                     <img className="d-block w-100" src="https://www.planetware.com/wpimages/2020/02/france-in-pictures-beautiful-places-to-photograph-eiffel-tower.jpg" alt="slide" />
-//                     <div className="text-center mt-5">Active slide {this.state.slide} <br/> {this.state.autoplay ? 'auto' : null}</div>
-//                     <div className="buttons mt-3">
-//                         <button 
-//                             className="btn btn-primary me-2"
-//                             onClick={() => this.changeSlide(-1)}>-1</button>
-//                         <button 
-//                             className="btn btn-primary me-2"
-//                             onClick={() => this.changeSlide(1)}>+1</button>
-//                         <button 
-//                             className="btn btn-primary me-2"
-//                             onClick={this.toggleAutoplay}>toggle autoplay</button>
-//                     </div>
-//                 </div>
-//             </Container>
-//         )
-//     }
-// }
-
-// const calcValue = () =>{
-//     console.log('random');
-
-//     return Math.random() * (50 - 1) +1;
-
-// }
-
-// const getSomeImages = () => {
-//     console.log('fetching');
-//     return [
-//         "https://www.planetware.com/wpimages/2020/02/france-in-pictures-beautiful-places-to-photograph-eiffel-tower.jpg",
-//         "https://www.planetware.com/wpimages/2020/02/france-in-pictures-beautiful-places-to-photograph-eiffel-tower.jpg"
-//     ]
-// }
-
-const countTotal = (num) => {
-    console.log('counting...');
-    return num + 10;
+        return <BaseComponent
+            {...props}
+            slide={slide}
+            autoplay={autoplay}
+            changeSlide={changeSlide}
+            setAutoplay={setAutoplay}
+        />
+    }
 }
 
-const Slider = (props) => {
+const getDataFromFirstFetch = () => { return 10 };
+const getDataFromSecondFetch = () => { return 20 };
 
-    const [slide, setSlide] = useState(0);
-    // const [slide, setSlide] = useState(() => calcValue());
-    const [autoplay, setAutoplay] = useState(false);
-    const getSomeImages = useCallback(() => {
-        console.log('fetching');
-        return [
-            "https://www.planetware.com/wpimages/2020/02/france-in-pictures-beautiful-places-to-photograph-eiffel-tower.jpg",
-            "https://www.planetware.com/wpimages/2020/02/france-in-pictures-beautiful-places-to-photograph-eiffel-tower.jpg",
-        ]
-    }, [slide]);
+const SliderFirst = (props) => {
 
-    function logging() {
-        console.log('log!');
-    }
-
-    // useEffect(() => {
-    //     console.log('effect update');
-    //     document.title = `Slide: ${slide}`;
-
-    //     // window.addEventListener('click', logging);
-
-    //     // return () => {
-    //     //     window.removeEventListener('click', logging);
-    //     // }
-
-
-
-    // });
-
-    // // const [state, setState] =useState({slide:0, autoplay: false});
-
-    // // function changeSlide(i) {
-    // //     setState(state => ({...state, slide: state.slide + i}));
-    // // }
-
-    // // function toggleAutoplay(i) {
-    // //     setState(state => ({...state , autoplay: !state.autoplay}));
-    // // }
-
-    // useEffect(() => {
-    //     console.log('autoplay');
-    // }, [autoplay])
-
-    function changeSlide(i) {
-        setSlide(slide => slide + i);
-    }
-
-    function toggleAutoplay(i) {
-        setAutoplay(autoplay => !autoplay);
-    }
-
-    const total = useMemo (() => {
-        return countTotal(slide);
-    }, [slide]);
-
-
-    const style = useMemo (() => ({
-        color: slide > 4 ? 'red' : 'black'
-    }), [slide])
-
-    useEffect(() => {
-        console.log('styles');
-    }, [style])
 
     return (
         <Container>
             <div className="slider w-50 m-auto">
-
-
-                {/* {
-                    getSomeImages().map((url, i) => {
-                        return (
-                            <img key={i} className="d-block w-100" src={url} alt="slide" />
-                        )
-                    })
-                } */}
-
-                <Slide getSomeImages={getSomeImages} />
-
-                <div className="text-center mt-5">Active slide {slide} <br />{autoplay ? 'auto' : null}</div>
-                <div style={style} className="text-center mt-5">Total slides: {total}</div>
+                <img className="d-block w-100" src="https://www.planetware.com/wpimages/2020/02/france-in-pictures-beautiful-places-to-photograph-eiffel-tower.jpg" alt="slide" />
+                <div className="text-center mt-5">Active slide {props.slide}</div>
                 <div className="buttons mt-3">
                     <button
                         className="btn btn-primary me-2"
-                        onClick={() => changeSlide(-1)}>-1</button>
+                        onClick={() => props.changeSlide(-1)}>-1</button>
                     <button
                         className="btn btn-primary me-2"
-                        onClick={() => changeSlide(1)}>+1</button>
-                    <button
-                        className="btn btn-primary me-2"
-                        onClick={toggleAutoplay}>toggle autoplay</button>
+                        onClick={() => props.changeSlide(1)}>+1</button>
                 </div>
             </div>
         </Container>
     )
 }
 
-const Slide = ({ getSomeImages }) => {
-    const [images, setImages] = useState([]);
+const SliderSecond = (props) => {
 
-    useEffect(() => {
-        setImages(getSomeImages())
-    }, [getSomeImages])
 
     return (
-        <>
-            {images.map((url, i) => <img key={i} className="d-block w-100" src={url} alt="slide" />)}
-        </>
+        <Container>
+            <div className="slider w-50 m-auto">
+                <img className="d-block w-100" src="https://www.planetware.com/wpimages/2020/02/france-in-pictures-beautiful-places-to-photograph-eiffel-tower.jpg" alt="slide" />
+                <div className="text-center mt-5">Active slide {props.slide} <br />{props.autoplay ? 'auto' : null} </div>
+                <div className="buttons mt-3">
+                    <button
+                        className="btn btn-primary me-2"
+                        onClick={() => props.changeSlide(-1)}>-1</button>
+                    <button
+                        className="btn btn-primary me-2"
+                        onClick={() => props.changeSlide(1)}>+1</button>
+                    <button
+                        className="btn btn-primary me-2"
+                        onClick={() => props.setAutoplay(autoplay => !props.autoplay)}>toggle autoplay</button>
+                </div>
+            </div>
+        </Container>
     )
 }
 
+const SliderWithFirstFetch = withSlider(SliderFirst, getDataFromFirstFetch);
+const SliderWithSecondFetch = withSlider(SliderSecond, getDataFromSecondFetch);
+
+const withLogger = WrappedComponent => props => {
+    useEffect(() => {
+        console.log('001');
+        
+    }, []);
+
+    return <WrappedComponent {...props}/>
+}
+
+const Hello = () => {
+    return (
+        <h1>Hello</h1>
+    )
+}
+
+const HelloWithLogger = withLogger(Hello);
+
 function App() {
-    const [slider, setSlider] = useState(true);
     return (
         <>
-            <button onClick={() => setSlider(false)}>
-                Click
-            </button>
-            {slider ? <Slider /> : null}
+
+            <HelloWithLogger />
+            <SliderWithFirstFetch />
+            <SliderWithSecondFetch />
         </>
     );
 }
